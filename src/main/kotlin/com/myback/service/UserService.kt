@@ -1,49 +1,39 @@
 package com.myback.service
 
-import com.myback.controller.request.PostUserRequest
 import com.myback.model.user.UserModel
+import com.myback.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
+import java.lang.Exception
 
 @Service
-class UserService {
+class UserService(
+    val userRepository: UserRepository
+) {
 
     val userList: MutableList<UserModel> = mutableListOf()
 
     fun getAll(name: String?): List<UserModel> {
         name?.let {
-            return userList.filter { it.username.contains(name, true) }
+            return userRepository.findByNameContaining(name)
         }
         println("userModel")
-        return userList
+        return userRepository.findAll().toList()
     }
 
     fun create(userModel: UserModel) {
-        println(userModel)
-        val id = userList.lastOrNull()?.let {
-            (it.userId ?: 0) + 1
-        } ?: 0
-        userList.add(UserModel(id, userModel.username, userModel.profilePictureUrl))
+        userRepository.save(userModel)
     }
     fun getUser(id: Int): UserModel {
-        println(id)
-        return userList.filter {
-            it.userId == id
-        }.first()
+        return userRepository.findById(id).orElseThrow()
     }
 
-    fun update(id: Int, userModel: UserModel) {
-        userList.filter {
-            it.userId == id
-        }.first().let {
-            it.username = userModel.username
-            it.profilePictureUrl = userModel.profilePictureUrl
-        }
+    fun update(userModel: UserModel) {
+        if(userRepository.existsById(userModel.id!!).not()) throw Exception()
+        userRepository.save(userModel)
     }
     fun delete(@PathVariable id: Int) {
-        userList.removeIf {
-            it.userId == id
-        }
+        if(userRepository.existsById(id).not()) throw Exception()
+        userRepository.deleteById(id)
     }
 }

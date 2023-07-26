@@ -19,14 +19,14 @@ class MyBackController(
     val putMapper: PutUserModelMapper= PutUserModelMapper()
 
     @GetMapping
-    fun getAll(@RequestParam name: String?) : UserModel {
-//        return userService.getAll(name)
-        return UserModel(12345,"dsjfdl","çdskf")
+    fun getAll(@RequestParam name: String?) : List<UserModel> {
+        return userService.getAll(name)
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody userModel: PostUserRequest) {
+        println(userModel)
         userService.create(postMapper(userModel))
     }
 
@@ -38,7 +38,7 @@ class MyBackController(
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(@PathVariable id: Int, @RequestBody putUser: PutUserRequest) {
-        userService.update(id, putMapper(putUser, id))
+        userService.update(putMapper(putUser, id))
     }
 
     @DeleteMapping("/{id}")

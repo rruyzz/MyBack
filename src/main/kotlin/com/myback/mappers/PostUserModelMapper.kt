@@ -6,9 +6,8 @@ import com.myback.model.user.UserModel
 class PostUserModelMapper {
     operator fun invoke(userRequest: PostUserRequest): UserModel {
         return UserModel(
-            userId = null,
-            username = userRequest.username,
-            profilePictureUrl = userRequest.profilePictureUrl,
+            name = userRequest.username,
+            email = userRequest.profilePictureUrl,
         )
     }
 }
